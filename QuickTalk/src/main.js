@@ -3,14 +3,15 @@ import App from "./App.vue";
 import * as vant from "vant";
 import "vant/lib/index.css";
 import "@vant/touch-emulator";
-import axios from "axios";
+import config from "/build.config.json";
 // ✅ 提取公共初始化逻辑
 function initApp() {
   console.log("body 已就绪:", document.body);
+  console.log("config", config);
 
   // 創建獨立的容器
   const container = document.createElement("div");
-  container.id = "agent-ui-root";
+  container.id = config.entryFileNames;
   document.body.appendChild(container);
 
   // 创建应用实例
@@ -18,9 +19,6 @@ function initApp() {
 
   // 使用 Vant 插件
   app.use(vant);
-
-  // 全局挂载 axios（推荐使用 provide/inject 方式）
-  app.config.globalProperties.$axios = axios;
 
   // 挂载到 DOM
   app.mount(container);
