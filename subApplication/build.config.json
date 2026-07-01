@@ -1,0 +1,6 @@
+{
+  "entryFileNames": "agent.js",
+  "manualChunks": {
+  
+  }
+}
