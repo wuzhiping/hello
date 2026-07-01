@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Iframe</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+      #myIframeContainer {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="myIframeContainer"></div>
+
+    <script>
+      (function () {
+        console.log("[iframe] 初始化");
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const entryUrl = urlParams.get("entry");
+        let subAppModule = null;
+        let isPreloaded = false;
+
+        function sendToParent(type, data) {
+          if (window.parent !== window) {
+            window.parent.postMessage(
+              { type, data, timestamp: Date.now() },
+              "*",
+            );
+          }
+        }
+
+        // ✅ 预加载：立即加载子应用模块，但不挂载
+        async function preloadSubApp(scriptUrl) {
+          try {
+            console.log("[iframe] 预加载子应用:", scriptUrl);
+            subAppModule = await import(scriptUrl);
+            isPreloaded = true;
+            console.log("[iframe] 子应用模块预加载完成");
+            sendToParent("subAppPreloaded", { status: "preloaded" });
+          } catch (err) {
+            console.error("[iframe] 预加载失败:", err);
+            sendToParent("error", { message: err.message });
+          }
+        }
+
+        // ✅ 挂载：只挂载，不加载
+        async function mountSubApp(props) {
+          if (!isPreloaded) {
+            console.error("[iframe] 子应用未预加载");
+            sendToParent("error", { message: "子应用未预加载" });
+            return;
+          }
+
+          if (!subAppModule || typeof subAppModule.mount !== "function") {
+            console.error("[iframe] 子应用未正确导出 mount");
+            sendToParent("error", { message: "子应用未导出 mount" });
+            return;
+          }
+
+          try {
+            console.log("[iframe] 开始挂载子应用");
+            await subAppModule.mount({
+              container: document.getElementById("myIframeContainer"),
+              ...props,
+            });
+            console.log("[iframe] 子应用挂载成功");
+            sendToParent("subAppMounted", { status: "mounted" });
+          } catch (err) {
+            console.error("[iframe] 挂载失败:", err);
+            sendToParent("error", { message: err.message });
+          }
+        }
+
+        // 监听父组件消息
+        window.addEventListener("message", async (event) => {
+          const { type, data } = event.data || {};
+          console.log("[iframe] 收到消息:", type, data);
+
+          if (type === "mount") {
+            // ✅ 收到 mount 指令只挂载，不加载
+            await mountSubApp(data?.props);
+          }
+        });
+
+        // ✅ 立即预加载子应用
+        if (entryUrl) {
+          preloadSubApp(decodeURIComponent(entryUrl));
+        } else {
+          console.error("[iframe] 缺少 entryUrl 参数");
+          sendToParent("error", { message: "缺少 entryUrl" });
+        }
+      })();
+    </script>
+  </body>
+</html>
