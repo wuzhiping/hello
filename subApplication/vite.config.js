@@ -29,9 +29,12 @@ if (fs.existsSync(configPath)) {
     if (typeof userConfig.entryFileNames !== "string") {
       console.error("entryFileNames 必须是字符串类型");
     } else {
+         // buildConfig.entryFileNames = userConfig.entryFileNames.includes(".js")
+      //   ? userConfig.entryFileNames.replace(".js", "_[hash].js")
+      //   : `${userConfig.entryFileNames}_[hash].js`;
       buildConfig.entryFileNames = userConfig.entryFileNames.includes(".js")
-        ? userConfig.entryFileNames.replace(".js", ".[hash].js")
-        : `${userConfig.entryFileNames}.[hash].js`;
+        ? userConfig.entryFileNames
+        : userConfig.entryFileNames + ".js";
     }
   }
 
@@ -101,7 +104,8 @@ export default defineConfig({
       formats: [buildConfig.format],
       fileName: () => {
         const hash = Date.now().toString(36);
-        return buildConfig.entryFileNames.replace('[hash]', hash);
+        return buildConfig.entryFileNames + hash;
+        // return buildConfig.entryFileNames.replace("[hash]", hash);
       },
     },
     rollupOptions: {
