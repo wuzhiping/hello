@@ -1,7 +1,7 @@
 <template>
   <div class="chat-container">
     <!-- 1. 顶部导航栏 -->
-    <div class="chat-header">
+    <!-- <div class="chat-header">
       pageAgent
       <van-button
         plain
@@ -26,7 +26,7 @@
         >小</van-button
       >
       <van-icon @click="handleClose" class="close-btn" name="close" />
-    </div>
+    </div> -->
     <!-- 2. 聊天消息区 -->
     <div class="chat-page-body"></div>
   </div>
