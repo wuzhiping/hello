@@ -114,7 +114,6 @@ export default {
   height: 100%;
   width: 100%;
   max-height: 100%;
-  min-height: 420px;
   overflow: hidden;
   background-color: #f0f2f5;
   z-index: 100000;
