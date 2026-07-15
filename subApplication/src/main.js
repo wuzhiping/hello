@@ -5,6 +5,7 @@ import * as vant from "vant";
 import "vant/lib/index.css";
 import "@vant/touch-emulator";
 import axios from "axios";
+import config from "/build.config.json";
 
 let app = null;
 
@@ -14,7 +15,7 @@ export async function mount(props) {
   if (!container) {
     console.log("[子应用] 父应用未传入容器，创建默认容器");
     container = document.createElement("div");
-    container.id = "agent-default-container";
+    container.id = config.entryFileNames || "agent-default-container";
     container.style.cssText = `
       position: fixed;
       right: 20px;
@@ -88,22 +89,14 @@ if (isStandalone()) {
   const init = () => {
     // ✅ 直接创建容器，不查询已有的元素
     const defaultContainer = document.createElement("div");
-    defaultContainer.id = "agent-ui-root";
+    defaultContainer.id = config.entryFileNames || "agent-ui-root";
     defaultContainer.style.cssText = `
-      position: fixed;
-      right: 20px;
-      bottom: 30px;
-      width: 400px;
-      max-width: 90%;
-      height: 600px;
-      max-height: 90%;
+      width: 100%;
+      height: 100%;
       background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
       z-index: 9999;
       overflow: hidden;
     `;
-    defaultContainer.style.height = "100vh"; // 占满视口高度
     document.body.appendChild(defaultContainer);
 
     mount({ container: defaultContainer });
