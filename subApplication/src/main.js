@@ -27,7 +27,7 @@ export async function mount(props) {
       background: #ffffff;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-      z-index: 9999;
+      z-index: 999;
       overflow: hidden;
     `;
     document.body.appendChild(container);
@@ -94,7 +94,7 @@ if (isStandalone()) {
       width: 100%;
       height: 100%;
       background: #ffffff;
-      z-index: 9999;
+      z-index: 999;
       overflow: hidden;
     `;
     document.body.appendChild(defaultContainer);
