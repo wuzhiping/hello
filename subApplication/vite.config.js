@@ -144,9 +144,11 @@ export default defineConfig({
     },
   },
   server: {
-    cors: true,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-    },
+    proxy: {
+      '/oauth2/fdep': {
+        target: 'https://abc.feg.com.tw',
+        changeOrigin: true,
+      },
+    }
   },
 });
